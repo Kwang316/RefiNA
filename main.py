@@ -25,7 +25,9 @@ def parse_args():
 	return parser.parse_args()
 
 def main(args):
+	#Read combined edgelist
 	nx_graph = nx.read_edgelist(args.input, nodetype = int, comments = "%")
+	#Read initial benchmark alignment matrix
 	adj = nx.adjacency_matrix(nx_graph, nodelist = range(nx_graph.number_of_nodes()) )
 	split_idx = 1124 if "species" in args.input else None #for species dataset, networks are of different sizes and the first has 1124 nodes
 	adj1, adj2 = split_adj(adj, split_idx)
@@ -69,6 +71,12 @@ def main(args):
 
 	#Refine solution
 	alignment_matrix = refina(init_alignment_matrix, adj1, adj2, args, true_alignments = true_alignments)
+	# Save the refined alignment matrix as a sparse matrix
+	refined_alignment_sparse_path = os.path.join(os.path.dirname(args.init_align), "refined_alignment_matrix.npz")
+	if not sparse.isspmatrix_csr(alignment_matrix):
+	    alignment_matrix = alignment_matrix.tocsr()
+	sparse.save_npz(refined_alignment_sparse_path, alignment_matrix)
+	print(f"Refined alignment matrix saved to '{refined_alignment_sparse_path}'.")
 	#'''
 	#Score final alignment result
 	print("Refined alignment results:")
@@ -79,7 +87,14 @@ def main(args):
 		print("No ground truth alignments.  Computing normalized overlap")
 		nov_score, lccc_score = normalized_overlap(adj1, adj2, alignment_matrix)
 		print("Normalized overlap %.5f%% and LCCC edge score %d" % (100*nov_score, lccc_score))
+	
 	mnc = score_MNC(alignment_matrix, adj1, adj2)
+	mnc_output_path = os.path.join(os.path.dirname(args.init_align), "mnc_score.txt")
+	# Save the mnc value to a text file
+	with open(mnc_output_path, 'w') as f:
+	    f.write(f"MNC: {mnc:.3f}\n")
+	
+	print(f"MNC score saved to '{mnc_output_path}'.")
 	print("MNC: %.3f" % mnc)
 
 if __name__ == "__main__":
