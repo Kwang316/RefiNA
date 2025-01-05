@@ -159,6 +159,9 @@ def score_sparse_alignment_matrix(alignment_matrix, topk = 1, topk_score_weighte
 
 def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc = True):
 	alignment_matrix = threshold_alignment_matrix(alignment_matrix, topk = 1) #binarize, keep top 1 alignment
+	print(f"Alignment matrix shape: {alignment_matrix.shape}")
+   	print(f"Adjacency matrix adj1 shape: {adj1.shape}")
+    	print(f"Adjacency matrix adj2 shape: {adj2.shape}")
 	#permute graph1 using discovered alignments
 	if sp.issparse(adj1):
 		alignment_matrix = sp.csr_matrix(alignment_matrix) #so no weird things with sparse/dense multiplication
