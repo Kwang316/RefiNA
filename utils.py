@@ -158,7 +158,7 @@ def score_sparse_alignment_matrix(alignment_matrix, topk = 1, topk_score_weighte
 	return alignment_score, correct_nodes
 
 def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc = True):
-	alignment_matrix = threshold_alignment_matrix(alignment_matrix, topk = None) #binarize, keep top 1 alignment
+	alignment_matrix = threshold_alignment_matrix(alignment_matrix, topk = 1) #binarize, keep top 1 alignment
 	#permute graph1 using discovered alignments
 	if sp.issparse(adj1):
 		alignment_matrix = sp.csr_matrix(alignment_matrix) #so no weird things with sparse/dense multiplication
@@ -224,7 +224,7 @@ def threshold_alignment_matrix(M, topk = None, keep_dist = False):
 		if sparse_input: M_thres = sp.csr_matrix(M_thres)
 		return M_thres
 
-def threshold_alignment_matrix_sparse(M, topk = None, keep_dist = False):
+def threshold_alignment_matrix_sparse(M, topk = 1, keep_dist = False):
 	if topk == 1: #we can find just the max elements per row easier
 		max_indices = np.ravel(np.asarray(M.argmax(axis = 1)))
 		max_vals = np.ravel(M.max(axis = 1).toarray()) #probably redundant but fast
