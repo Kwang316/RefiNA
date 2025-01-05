@@ -160,8 +160,8 @@ def score_sparse_alignment_matrix(alignment_matrix, topk = 1, topk_score_weighte
 def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc = True):
 	alignment_matrix = threshold_alignment_matrix(alignment_matrix, topk = 1) #binarize, keep top 1 alignment
 	print(f"Alignment matrix shape: {alignment_matrix.shape}")
-   	print(f"Adjacency matrix adj1 shape: {adj1.shape}")
-    	print(f"Adjacency matrix adj2 shape: {adj2.shape}")
+	print(f"Adjacency matrix adj1 shape: {adj1.shape}")
+	print(f"Adjacency matrix adj2 shape: {adj2.shape}")
 	#permute graph1 using discovered alignments
 	if sp.issparse(adj1):
 		alignment_matrix = sp.csr_matrix(alignment_matrix) #so no weird things with sparse/dense multiplication
@@ -175,7 +175,7 @@ def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc = True):
 		overlap_edges = map_adj1*adj2
 		n_overlap = np.count_nonzero(overlap_edges)
 		max_edges = max(np.count_nonzero(adj1), np.count_nonzero(adj2))
-
+	
 	lccc_edges = -1
 	if compute_lccc:
 		overlap_nx = nx.from_scipy_sparse_matrix(sp.csr_matrix(overlap_edges))
