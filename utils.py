@@ -29,13 +29,22 @@ def split_embeddings(combined_embed, split_index = None, increasing_size = True)
 
 #Split adjacency matrix in two
 def split_adj(combined_adj, split_index = None, increasing_size = True):
-	if split_index is None: split_index = int(combined_adj.shape[0] / 2) #default: assume graphs are same size
-	
+	total_nodes = combined_adj.shape[0]
+	if split_index is None: 
+		split_index = total_nodes // 2 #split_index = int(combined_adj.shape[0] / 2) #default: assume graphs are same size
+	adj1 = combined_adj[:split_index, :split_index]
+    	adj2 = combined_adj[split_index:, split_index:]
 	if sp.issparse(combined_adj):
-		if not combined_adj.getformat() != "csc": combined_adj = combined_adj.tocsc() #start off with csc so that we end up as csr
-		adj1 = combined_adj[:,:split_index]; adj2 = combined_adj[:,split_index:] #select columns as csc bc faster
-		adj1 = adj1.tocsr(); adj2 = adj2.tocsr() #convert to CSR for fast row slicing
-		adj1 = adj1[:split_index]; adj2 = adj2[split_index:]
+		#if not combined_adj.getformat() != "csc": combined_adj = combined_adj.tocsc() #start off with csc so that we end up as csr
+		if combined_adj.getformat() != "csc":
+    			combined_adj = combined_adj.tocsc()
+		adj1 = combined_adj[:,:split_index]
+		adj2 = combined_adj[:,split_index:] #select columns as csc bc faster
+		adj1 = adj1.tocsr()
+		adj2 = adj2.tocsr() #convert to CSR for fast row slicing
+		adj1 = adj1[:split_index]
+		adj2 = adj2[split_index:]
+		
 	else:
 		adj1 = combined_adj[:split_index,:split_index]
 		adj2 = combined_adj[split_index:,split_index:]
@@ -163,15 +172,7 @@ def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc = True):
 	print(f"Alignment matrix shape: {alignment_matrix.shape}")
 	print(f"Adjacency matrix adj1 shape: {adj1.shape}")
 	print(f"Adjacency matrix adj2 shape: {adj2.shape}")
-	# Create a dummy row and column
-	dummy_row = sp.csr_matrix((1, adj2.shape[1]))
-	dummy_col = sp.csr_matrix((adj2.shape[0]+1, 1))
 	
-	# Add the dummy row
-	adj2 = sp.vstack([adj2, dummy_row])
-	
-	# Add the dummy column
-	adj2 = sp.hstack([adj2, dummy_col])
 	#permute graph1 using discovered alignments
 	if sp.issparse(adj1):
 		alignment_matrix = sp.csr_matrix(alignment_matrix) #so no weird things with sparse/dense multiplication
