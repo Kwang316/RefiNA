@@ -44,11 +44,9 @@ def split_adj(combined_adj, split_index = None, increasing_size = True):
 		adj2 = adj2.tocsr() #convert to CSR for fast row slicing
 		adj1 = adj1[:split_index]
 		adj2 = adj2[split_index:]
-		
 	else:
 		adj1 = combined_adj[:split_index,:split_index]
 		adj2 = combined_adj[split_index:,split_index:]
-
 	#Align larger graph to smaller one
 	if increasing_size and adj1.shape[0] < adj2.shape[0]:
 		tmp = adj1
