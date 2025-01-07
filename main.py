@@ -79,7 +79,7 @@ def main(args):
     
     # Now call normalized_overlap with the sliced alignment matrix
     nov_score, lccc_score = normalized_overlap(adj1, adj2, sliced_alignment_matrix)
-    rint("Initial normalized overlap %.5f%% and LCCC edge score %d" % (100*nov_score, lccc_score))
+    print("Initial normalized overlap %.5f%% and LCCC edge score %d" % (100*nov_score, lccc_score))
     if true_alignments is None:
         print("No ground truth alignments. Computing normalized overlap")
         # Use the refined alignment matrix or the correct sliced version here if needed
