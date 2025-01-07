@@ -87,7 +87,8 @@ def main(args):
         print("Initial normalized overlap %.5f%% and LCCC edge score %d" % (100*nov_score, lccc_score))		
 
     # Refine solution
-    alignment_matrix = refina(init_alignment_matrix, adj1, adj2, args, true_alignments=true_alignments)
+    #alignment_matrix = refina(init_alignment_matrix, adj1, adj2, args, true_alignments=true_alignments)
+    alignment_matrix = refina(sliced_alignment_matrix, adj1, adj2, args, true_alignments=true_alignments)
     # Save the refined alignment matrix as a sparse matrix
     refined_alignment_sparse_path = os.path.join(os.path.dirname(args.init_align), "refined_alignment_matrix.npz")
     if not sparse.isspmatrix_csr(alignment_matrix):
