@@ -68,7 +68,17 @@ def main(args):
     # Keep top 1 alignment, i.e., treat initial solution as "hard" binary alignments
     # RefiNA can in principle refine "soft" alignments, but our paper only considered "hard" base alignments (which all base NA methods can produce)
     init_alignment_matrix = threshold_alignment_matrix(init_alignment_matrix, topk=1)
-
+    # After splitting adj1 and adj2
+    rows_for_adj1 = adj1.shape[0]  # e.g., 18524
+    cols_for_adj2 = adj2.shape[0]  # e.g., 18523
+    
+    # Slice the alignment matrix from the loaded init_alignment_matrix
+    # Ensure that init_alignment_matrix is defined in this scope
+    sliced_alignment_matrix = init_alignment_matrix[:rows_for_adj1, rows_for_adj1:rows_for_adj1+cols_for_adj2]
+    print(f"Sliced alignment matrix shape: {sliced_alignment_matrix.shape}")
+    
+    # Now call normalized_overlap with the sliced alignment matrix
+    nov_score, lccc_score = normalized_overlap(adj1, adj2, sliced_alignment_matrix)
     if true_alignments is None:
         nov_score, lccc_score = normalized_overlap(adj1, adj2, init_alignment_matrix)
         print("Initial normalized overlap %.5f%% and LCCC edge score %d" % (100*nov_score, lccc_score))		
