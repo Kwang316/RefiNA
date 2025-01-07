@@ -178,12 +178,22 @@ def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc=True):
     print(f"Alignment matrix shape: {alignment_matrix.shape}")
     print(f"Adjacency matrix adj1 shape: {adj1.shape}")
     print(f"Adjacency matrix adj2 shape: {adj2.shape}")
+    # Assuming init_alignment_matrix is the loaded (37047, 37047) matrix
+    rows_for_adj1 = adj1.shape[0]  # 18524
+    cols_for_adj2 = adj2.shape[0]  # 18523
     
+    # Slice the alignment matrix: rows for graph1 and columns for graph2
+    aligned_matrix = init_alignment_matrix[:rows_for_adj1, rows_for_adj1:rows_for_adj1+cols_for_adj2]
+    
+    print(f"Sliced alignment matrix shape: {aligned_matrix.shape}")
+    # Expected shape: (18524, 18523)
+
     # Permute graph1 using discovered alignments
     if sp.issparse(adj1):
         alignment_matrix = sp.csr_matrix(alignment_matrix)  # so no weird things with sparse/dense multiplication
         adj1 = adj1.tocsr()
         adj2 = adj2.tocsr()  # just make sure we use the same sparse format
+
     map_adj1 = alignment_matrix.T.dot(adj1).dot(alignment_matrix)
     if sp.issparse(map_adj1):  # adj matrices are sparse and so is overlap matrices
         overlap_edges = map_adj1.multiply(adj2)
