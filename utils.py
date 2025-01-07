@@ -196,7 +196,8 @@ def normalized_overlap(adj1, adj2, alignment_matrix, compute_lccc=True):
     
     lccc_edges = -1
     if compute_lccc:
-        overlap_nx = nx.from_scipy_sparse_matrix(sp.csr_matrix(overlap_edges))
+        #overlap_nx = nx.from_scipy_sparse_matrix(sp.csr_matrix(overlap_edges))
+        overlap_nx = nx.from_scipy_sparse_array(sp.csr_matrix(overlap_edges))
         lccc = max(nx.connected_components(overlap_nx), key=len)  # NX 2.5
         lccc = overlap_nx.subgraph(lccc).copy()  # NX 2.5
         lccc_nodes = lccc.number_of_nodes()
